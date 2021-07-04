@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevNote</title>
+    <link rel="icon" href="static/svg/Book.svg">
+    <!-- stylesheet -->
+    <link rel="stylesheet" href="static/css/home.css" />
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@100&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <script>
+      const bearer = localStorage.getItem("bearer");
+      if(bearer == undefined || bearer == null){
+        window.location = "/login.html";
+        console.log("Not found");
+      }
+    </script>
+    <!-- Side Bar -->
+    <div class="sidebar">
+      <div class="logo">
+        <img src="static/svg/DevNote.svg" alt="Logo" />
+      </div>
+      <hr />
+      <!-- <a onclick="addNotebookModal()" class="new-note" id="addNotebook">
+        <img src="static/svg/Plus.svg" alt="plus" />
+        <div class="btn-text">New NoteBook</div>
+      </a> -->
+      <div class="new-note">
+        <img src="static/svg/logout.svg" onclick="logout()" style="height:30px;width:30px;" alt="Logout" />
+        <img src="static/svg/add.svg" onclick="addNotebookModal()" id="addNoteButton" style="height:30px;width:30px;" alt="Add" />
+      </div>
+      <br />
+    </div>
+
+    <!-- body -->
+    <div class="wrapper">
+      <!-- Note Home -->
+      <div class="note-home">
+        <h1>All notebooks</h1>
+        <div class="card-list" id="card-section"></div>
+      </div>
+    </div>
+
+    <!-- //Add notebook model -->
+    <div class="anbm" id="anbm" style="display: none;">
+      <div class="anbmc">
+          <label class="anbmctitle">Title</label>
+          <input class="input" id="anbmtitle" type="text" />
+          <label class="anbmcdesc">Description</label>
+          <textarea class="input" id="anbmdesc" rows="10" cols="25"></textarea>
+          <button id="submitAddNotebook" onclick="submitAddNotebookModal()">Submit</button>
+          <button id="cancelAddNotebook" onclick="closeAddNotebookModal()" >Cancel</button>
+      </div> 
+  </div>
+  
+  <style>
+  .anbmc{
+      display:flex;
+      flex-direction: column;
+      background-color:#92967d;
+      color:#fff;
+      align-items: center;
+      border-radius:5px;
+      width: 300px;
+      height: 300px;
+      position: absolute;
+      left: 50%;
+      top: 50%; 
+      margin-left: -150px;
+      margin-top: -150px;
+  }
+  .anbmc{
+      padding-top:50px;
+  }
+  .anbm .input:focus {
+    border-color: hsl(245,100%,42%);
+    box-shadow: 0 0 0 3px hsla(245,100%,82%,0.8);
+    outline: 3px solid transparent;
+  }
+  </style>
+
+
+    <!-- script -->
+    <script src="static/js/home.js"></script>
+  </body>
+</html>

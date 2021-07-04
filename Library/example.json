@@ -1,0 +1,25 @@
+// User
+{
+    "email":"email@email.com",
+    "username":"username",
+    "password":"password"
+},
+//Note
+{
+    "title":"title of note",
+    "description":"desc of note",
+    "createdAt": "created Date",
+    "updatedAt": "updated Time",
+    "content":"Respective Content",
+    "notebookid":"mongo object id",
+    "userid":"mongo object id",
+},
+//Notebook
+{
+    "title":"title of note",
+    "description":"desc of note",
+    "createdAt": "created Date",
+    "updatedAt": "updated Time",
+    "notes":"Array of mongo id",
+    "userid":"mongo object id",
+}

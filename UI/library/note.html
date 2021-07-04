@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevNote</title>
+    <link rel="icon" href="static/svg/Book.svg">
+    <!-- stylesheet -->
+    <link rel="stylesheet" href="static/css/note.css" />
+    <link rel="stylesheet" href="static/css/markdown.css" />
+    <link rel="stylesheet" href="static/css/hljs.css" />
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@100&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <script>
+      const bearer = localStorage.getItem("bearer");
+      if(bearer == undefined || bearer == null){
+        window.location = "/login.html";
+        console.log("Not found");
+      }
+      const notebookId = sessionStorage.getItem("notebookId");
+      if(notebookId == undefined || notebookId == null){
+        window.location = "/home.html";
+        console.log("Not found");
+      }
+      var currentNoteId;
+      var currentEditNoteId;
+      const apiURL = "http://192.168.1.200:5001/note/"
+      const username = localStorage.getItem("username");
+    </script>
+    <!-- Side Bar -->
+    <div class="sidebar">
+      <div class="logo">
+        <!-- <img src="static/svg/DevNote.svg" alt="Logo" />
+         -->
+         <span class="logotext">KRS</span>
+      </div>
+      <hr />
+      <div class="new-note">
+        <img src="static/svg/logout.svg" onclick="logout()" style="height:30px;width:30px;" alt="Logout" />
+        <img src="static/svg/add.svg" onclick="addNoteModal()" id="addNoteButton" style="height:30px;width:30px;" alt="Add" />
+        <img src="static/svg/notebooks.svg" onclick ="redirectToNotebooks()" style="height:30px;width:30px;" alt="Notebook" />
+        <img src="static/svg/toggle.svg" onclick ="toggleEditor()" style="height:30px;width:30px;" alt="Toggle" />
+      </div>
+      <div class="notes-bar">
+        <img class="arrow" src="static/svg/Book.svg" alt="arrow" />
+        <div class="bar-text" id="notebookName">Notes</div>
+      </div>
+      <div class="notes-display" id="notes-list">
+      </div>
+    </div>
+
+    <!-- body -->
+    <div class="wrapper">
+      <!-- Note Home -->
+      <div class="note-home">
+        <div class="note-wrapper">
+          <div class="note-editor" id="handsEditor">
+            <div class="note-header">
+              <div class="note-title" id="note-title">Title </div>
+              <div id="saveStatus"></div> 
+            </div>
+            <div class="editor">
+              <div class="textopt">
+                <div class="optlogo" id="slink">
+                  <img src="static/svg/ops/text-link.svg" onclick="addMarkdown('slink')" alt="arrow" />
+                </div>
+                <div class="optlogo" id="simage">
+                  <img src="static/svg/ops/image.svg" onclick="addMarkdown('simage')" alt="arrow" />
+                </div>
+                <div class="optlogo" id="sblock">
+                  <img src="static/svg/ops/block.svg" onclick="addMarkdown('sblock')" alt="arrow" />
+                </div>
+                <div class="optlogo" id="stable">
+                  <img src="static/svg/ops/table.svg" onclick="addMarkdown('stable')" alt="arrow" />
+                </div>
+                <div class="optlogo" id="slist">
+                  <img src="static/svg/ops/list.svg" onclick="addMarkdown('slist')" alt="arrow" />
+                </div>
+                <div class="optlogo" id="scode">
+                  <img src="static/svg/ops/code.svg" onclick="addMarkdown('scode')" alt="arrow" />
+                </div>
+              </div>
+              <textarea name="editor" id="editorContent" cols="30" rows="10" spellcheck="false"></textarea>
+            </div>
+            </div>
+          <div class="note-editor livepre" id="togglelive">
+            <div class="note-header">Live Preview</div>
+            <div class="editor live markdown-body" id="liveEditor"></div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- modals -->
+      <!-- Add Note Modal -->
+      <div class="anm" id="anm" style="display: none;">
+        <div class="anmc">
+            <label class="anmctitle">Title</label>
+            <input class="input" id="anmtitle" type="text" />
+            <label class="anmcdesc">Description</label>
+            <textarea class="input" id="anmdesc" rows="10" cols="25"></textarea>
+            <button id="submitAddNote" onclick="submitAddNoteModal()">Submit</button>
+            <button id="cancelAddNote" onclick="closeAddNoteModal()" >Cancel</button>
+        </div> 
+    </div>
+    
+    <style>
+    .anmc{
+        display:flex;
+        flex-direction: column;
+        background-color:#92967d;
+        color:#fff;
+        align-items: center;
+        border-radius:5px;
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%; 
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+    .anmc{
+        padding-top:50px;
+    }
+    .anm .input:focus {
+      border-color: hsl(245,100%,42%);
+      box-shadow: 0 0 0 3px hsla(245,100%,82%,0.8);
+      outline: 3px solid transparent;
+    }
+    </style>
+
+
+
+    <!-- Edit Note Modal -->
+    <div class="enm" id="enm" style="display: none;">
+      <div class="enmc">
+          <label class="enmctitle">Title</label>
+          <input class="input" id="enmtitle" type="text" />
+          <label class="anmcdesc">Description</label>
+          <textarea class="input" id="enmdesc" rows="10" cols="25"></textarea>
+          <button id="submitEditNote" onclick="submitUpdateNoteModal()">Update</button>
+          <button id="cancelUpdateNote" onclick="closeUpdateNoteModal()" >Cancel</button>
+      </div> 
+  </div>
+  
+  <style>
+  .enmc{
+        display:flex;
+        flex-direction: column;
+        background-color:#92967d;
+        color:#fff;
+        align-items: center;
+        border-radius:5px;
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%; 
+        margin-left: -150px;
+        margin-top: -150px;
+  }
+  .enmc{
+      padding-top:50px;
+  }
+  
+  .enm .input:focus {
+    border-color: hsl(245,100%,42%);
+    box-shadow: 0 0 0 3px hsla(245,100%,82%,0.8);
+    outline: 3px solid transparent;
+  }
+  </style>
+
+    <!-- script -->
+    <script src="static/js/notea.js"></script>
+    <script src="static/js/controller.js"></script>
+  </body>
+</html>
